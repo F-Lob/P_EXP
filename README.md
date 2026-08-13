@@ -13,4 +13,8 @@
 
     Conexion de BDD PostgreSQL correcta y funcional
 
-
+## 2DA Iteración
+    
+    Creación de las tablas con python en PostgreSQL
+    Re-estructuración de carpetas
+    Ocultar datos sensibles públicos a privados
