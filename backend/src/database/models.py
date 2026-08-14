@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from database.database import Base
+from .database import Base
+
 import datetime
 
 # Tabla de categorías
