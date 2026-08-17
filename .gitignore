@@ -1,2 +1,3 @@
-backend/src/database/congif.py
+backend/src/database/config.py
+.gitignore
 
