@@ -18,3 +18,53 @@
     Creación de las tablas con python en PostgreSQL
     Re-estructuración de carpetas
     Ocultar datos sensibles públicos a privados
+
+## 3RA Iteracion 
+
+    Se crean los endpoints basicos para la aplicacion
+    Se realizan pruebas a los endpoints, comprobando que todos funcionen
+    Se inicializa React con Vite en el Frontend
+    Se añaden dependencias del Frontend
+    Configuracion de entorno para Tailwind
+    Instalacion de Recharts
+    Estructuracion de carpetas Frontend
+
+## 4TA Iteración
+    Creación de servicios para comunicación Frontend - Backend
+    Configuración de rutas con react-router-dom
+    Creación de componentes
+    Desarrollo de página Dashboard, Gastos, Categorias
+    Aplicación web funcional y conectada end-to-end
+
+
+## Instrucciones para arrancar el proyecto
+
+## Requisitos
+- Python 3.10+
+- Node.js 18+
+- PostgreSQL instalado y corriendo
+
+## Backend
+1. Activar el entorno virtual dentro del backend/:
+   - python -m venv env
+   - env\Scripts\activate
+2. Instalar dependencias:
+   - pip install fastapi uvicorn sqlalchemy psycopg2-binary pandas python-dotenv
+3. Crear el archivo src/database/config.py con las credenciales de la base de datos:
+   - DB_USER
+   - DB_PASSWORD
+   - DB_HOST
+   - DB_PORT
+   - DB_NAME
+   - DATABASE_URL
+4. Ejecutar py create_tables.py para crear las tablas e insertar categorías iniciales
+5. Arrancar el backend:
+   - uvicorn src.main:app --reload
+
+## Frontend
+1. Instalar dependencias dentro de frontend/:
+   - npm install
+2. Hacer funcionar el frontend:
+   - npm run dev
+
+
