@@ -1,23 +1,65 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Gastos from "./pages/Gastos";
 import Categorias from "./pages/Categorias";
+import Login from "./pages/Login";
+import Registro from "./pages/Registro";
+
+// Componente que protege rutas privadas
+function RutaProtegida({ children }) {
+  const { token } = useAuth();
+  return token ? children : <Navigate to="/login" />;
+}
+
+function AppContenido() {
+  const { token } = useAuth();
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      {token && <Navbar />}
+      <main className="container mx-auto p-6">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Registro />} />
+          <Route
+            path="/"
+            element={
+              <RutaProtegida>
+                <Dashboard />
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/gastos"
+            element={
+              <RutaProtegida>
+                <Gastos />
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/categorias"
+            element={
+              <RutaProtegida>
+                <Categorias />
+              </RutaProtegida>
+            }
+          />
+        </Routes>
+      </main>
+    </div>
+  );
+}
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-100">
-        <Navbar />
-        <main className="container mx-auto p-6">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/gastos" element={<Gastos />} />
-            <Route path="/categorias" element={<Categorias />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppContenido />
+      </Router>
+    </AuthProvider>
   );
 }
 

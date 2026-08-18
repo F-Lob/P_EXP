@@ -36,6 +36,22 @@
     Desarrollo de página Dashboard, Gastos, Categorias
     Aplicación web funcional y conectada end-to-end
 
+## 5TA Iteración
+
+   Mejoras de UX en Gastos y Categorías
+   Validaciones en formularios
+   Mensajes de feedback al usuario (Toast)
+   Confirmación antes de eliminar
+   Total de gastos visible por filtro y por categoría
+   Filtros y búsqueda de datos
+   Exportación de gastos a CSV y PDF
+
+## 6TA Iteración
+   Se añade Auth
+   Se añade formulario de registro y login
+   Usuarios creados en la base de datos
+   Usuarios independientes con datos independientes
+   Mensajes de error, falla en registro/login
 
 ## Instrucciones para arrancar el proyecto
 

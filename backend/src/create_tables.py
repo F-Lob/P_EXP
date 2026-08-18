@@ -1,5 +1,5 @@
 from database.database import engine, Base, SessionLocal
-from database.models import Categoria, Gasto
+from database.models import Categoria, Gasto, Usuario   
 
 Base.metadata.create_all(bind=engine)
 

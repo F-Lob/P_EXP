@@ -91,7 +91,7 @@ function Dashboard() {
                 <XAxis dataKey="mes" />
                 <YAxis />
                 <Tooltip formatter={(value) => `$${value.toLocaleString("es-CL")}`} />
-                <Bar dataKey="total" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="total" fill="#f6d73b" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (

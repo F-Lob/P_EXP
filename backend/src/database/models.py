@@ -1,20 +1,30 @@
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from .database import Base
-
+from ..database.database import Base
 import datetime
 
-# Tabla de categorías
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, nullable=False, unique=True)
+    password = Column(String, nullable=False)
+
+    categorias = relationship("Categoria", back_populates="usuario")
+    gastos = relationship("Gasto", back_populates="usuario")
+
+
 class Categoria(Base):
     __tablename__ = "categorias"
 
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, nullable=False, unique=True)
+    nombre = Column(String, nullable=False)
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
 
+    usuario = relationship("Usuario", back_populates="categorias")
     gastos = relationship("Gasto", back_populates="categoria")
 
 
-# Tabla de gastos
 class Gasto(Base):
     __tablename__ = "gastos"
 
@@ -22,7 +32,8 @@ class Gasto(Base):
     descripcion = Column(String, nullable=False)
     monto = Column(Float, nullable=False)
     fecha = Column(DateTime, default=datetime.datetime.utcnow)
-
     categoria_id = Column(Integer, ForeignKey("categorias.id"))
+    usuario_id = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
 
     categoria = relationship("Categoria", back_populates="gastos")
+    usuario = relationship("Usuario", back_populates="gastos")
