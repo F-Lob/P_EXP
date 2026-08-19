@@ -53,6 +53,16 @@
    Usuarios independientes con datos independientes
    Mensajes de error, falla en registro/login
 
+## 7MA Iteración
+   Implementación de tarjetas de crédito con vista de detalle
+    Control de cuotas por gasto de tarjeta (pagadas y restantes)
+    Barra de progreso visual por cuota
+    Registro y actualización de sueldo mensual
+    Saldo disponible en el Dashboard (sueldo - gastos)
+    Gastos fijos con día de cobro y filtro por tipo
+    Tarjetas de resumen en Dashboard (sueldo, saldo, mes actual, total)
+    Desglose de gastos fijos vs variables
+
 ## Instrucciones para arrancar el proyecto
 
 ## Requisitos

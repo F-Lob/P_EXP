@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const { usuario, logout } = useAuth();
@@ -24,6 +23,9 @@ function Navbar() {
           </Link>
           <Link to="/categorias" className="hover:text-blue-200 transition">
             Categorías
+          </Link>
+          <Link to="/tarjetas" className="hover:text-blue-200 transition">
+            Tarjetas
           </Link>
           <span className="text-blue-200 text-sm">👤 {usuario}</span>
           <button

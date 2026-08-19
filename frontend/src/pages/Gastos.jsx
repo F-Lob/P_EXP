@@ -11,11 +11,14 @@ function Gastos() {
     descripcion: "",
     monto: "",
     categoria_id: "",
-    fecha: ""
+    fecha: "",
+    es_fijo: false,
+    dia_cobro: ""
   });
   const [toast, setToast] = useState({ mensaje: "", tipo: "" });
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [filtroMes, setFiltroMes] = useState("");
+  const [filtroTipo, setFiltroTipo] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   useEffect(() => {
@@ -35,7 +38,8 @@ function Gastos() {
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleSubmit = async () => {
@@ -51,13 +55,27 @@ function Gastos() {
       mostrarToast("La fecha no puede ser futura", "error");
       return;
     }
+    if (form.es_fijo && (!form.dia_cobro || parseInt(form.dia_cobro) < 1 || parseInt(form.dia_cobro) > 31)) {
+      mostrarToast("Ingresa un día de cobro válido (1-31)", "error");
+      return;
+    }
+
     await createGasto({
       descripcion: form.descripcion,
       monto: parseFloat(form.monto),
       categoria_id: parseInt(form.categoria_id),
-      fecha: form.fecha || null
+      fecha: form.fecha || null,
+      es_fijo: form.es_fijo,
+      dia_cobro: form.es_fijo ? parseInt(form.dia_cobro) : null
     });
-    setForm({ descripcion: "", monto: "", categoria_id: "", fecha: "" });
+    setForm({
+      descripcion: "",
+      monto: "",
+      categoria_id: "",
+      fecha: "",
+      es_fijo: false,
+      dia_cobro: ""
+    });
     mostrarToast("Gasto agregado correctamente");
     cargarDatos();
   };
@@ -76,7 +94,10 @@ function Gastos() {
     const coincideMes = filtroMes
       ? new Date(g.fecha).toISOString().slice(0, 7) === filtroMes
       : true;
-    return coincideCategoria && coincideMes;
+    const coincideTipo = filtroTipo
+      ? filtroTipo === "fijo" ? g.es_fijo : !g.es_fijo
+      : true;
+    return coincideCategoria && coincideMes && coincideTipo;
   });
 
   const totalFiltrado = gastosFiltrados.reduce((acc, g) => acc + g.monto, 0);
@@ -85,25 +106,21 @@ function Gastos() {
     gastos.map((g) => new Date(g.fecha).toISOString().slice(0, 7))
   )].sort().reverse();
 
-  // Exportar a CSV
   const exportarCSV = () => {
     if (gastosFiltrados.length === 0) {
       mostrarToast("No hay gastos para exportar", "error");
       return;
     }
-
-    const encabezados = ["Descripción", "Monto", "Categoría", "Fecha"];
+    const encabezados = ["Descripción", "Monto", "Categoría", "Fecha", "Tipo", "Día de cobro"];
     const filas = gastosFiltrados.map((g) => [
       g.descripcion,
       g.monto,
       categorias.find((c) => c.id === g.categoria_id)?.nombre || "Sin categoría",
-      new Date(g.fecha).toLocaleDateString("es-CL")
+      new Date(g.fecha).toLocaleDateString("es-CL"),
+      g.es_fijo ? "Fijo" : "Variable",
+      g.dia_cobro || "-"
     ]);
-
-    const contenido = [encabezados, ...filas]
-      .map((fila) => fila.join(","))
-      .join("\n");
-
+    const contenido = [encabezados, ...filas].map((f) => f.join(",")).join("\n");
     const blob = new Blob([contenido], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -114,46 +131,37 @@ function Gastos() {
     mostrarToast("CSV exportado correctamente");
   };
 
-  // Exportar a PDF
   const exportarPDF = () => {
     if (gastosFiltrados.length === 0) {
       mostrarToast("No hay gastos para exportar", "error");
       return;
     }
-
     const doc = new jsPDF();
-
-    // Título
     doc.setFontSize(16);
     doc.text("Reporte de Gastos", 14, 16);
-
-    // Subtítulo con mes si está filtrado
     doc.setFontSize(11);
     doc.setTextColor(100);
     doc.text(
       filtroMes
         ? `Mes: ${new Date(filtroMes + "-01").toLocaleString("es-CL", { month: "long", year: "numeric" })}`
         : "Todos los meses",
-      14,
-      24
+      14, 24
     );
-
-    // Tabla
     autoTable(doc, {
       startY: 30,
-      head: [["Descripción", "Monto", "Categoría", "Fecha"]],
+      head: [["Descripción", "Monto", "Categoría", "Fecha", "Tipo"]],
       body: gastosFiltrados.map((g) => [
         g.descripcion,
         `$${g.monto.toLocaleString("es-CL")}`,
         categorias.find((c) => c.id === g.categoria_id)?.nombre || "Sin categoría",
-        new Date(g.fecha).toLocaleDateString("es-CL")
+        new Date(g.fecha).toLocaleDateString("es-CL"),
+        g.es_fijo ? "Fijo" : "Variable"
       ]),
-      foot: [["Total", `$${totalFiltrado.toLocaleString("es-CL")}`, "", ""]],
+      foot: [["Total", `$${totalFiltrado.toLocaleString("es-CL")}`, "", "", ""]],
       styles: { fontSize: 10 },
       headStyles: { fillColor: [59, 130, 246] },
       footStyles: { fillColor: [239, 246, 255], textColor: [30, 64, 175], fontStyle: "bold" }
     });
-
     doc.save(`gastos_${filtroMes || "todos"}.pdf`);
     mostrarToast("PDF exportado correctamente");
   };
@@ -205,6 +213,36 @@ function Gastos() {
             className="border rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
+
+        {/* Checkbox gasto fijo */}
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            name="es_fijo"
+            id="es_fijo"
+            checked={form.es_fijo}
+            onChange={handleChange}
+            className="w-4 h-4 accent-blue-600"
+          />
+          <label htmlFor="es_fijo" className="text-gray-700 text-sm">
+            Es un gasto fijo (se repite todos los meses)
+          </label>
+        </div>
+
+        {/* Día de cobro solo si es fijo */}
+        {form.es_fijo && (
+          <input
+            type="number"
+            name="dia_cobro"
+            placeholder="Día de cobro (1-31)"
+            value={form.dia_cobro}
+            onChange={handleChange}
+            min="1"
+            max="31"
+            className="border rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        )}
+
         <button
           onClick={handleSubmit}
           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
@@ -216,7 +254,7 @@ function Gastos() {
       {/* Filtros */}
       <div className="bg-white rounded-2xl shadow p-6">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">Filtros</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <select
             value={filtroCategoria}
             onChange={(e) => setFiltroCategoria(e.target.value)}
@@ -241,10 +279,19 @@ function Gastos() {
               </option>
             ))}
           </select>
+          <select
+            value={filtroTipo}
+            onChange={(e) => setFiltroTipo(e.target.value)}
+            className="border rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="">Todos los tipos</option>
+            <option value="fijo">Fijos</option>
+            <option value="variable">Variables</option>
+          </select>
         </div>
-        {(filtroCategoria || filtroMes) && (
+        {(filtroCategoria || filtroMes || filtroTipo) && (
           <button
-            onClick={() => { setFiltroCategoria(""); setFiltroMes(""); }}
+            onClick={() => { setFiltroCategoria(""); setFiltroMes(""); setFiltroTipo(""); }}
             className="mt-3 text-sm text-blue-600 hover:underline"
           >
             Limpiar filtros
@@ -252,7 +299,7 @@ function Gastos() {
         )}
       </div>
 
-      {/* Tabla de gastos */}
+      {/* Tabla */}
       <div className="bg-white rounded-2xl shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-700">
@@ -271,7 +318,6 @@ function Gastos() {
           </div>
         </div>
 
-        {/* Botones de exportar */}
         <div className="flex gap-3 mb-4">
           <button
             onClick={exportarCSV}
@@ -295,6 +341,7 @@ function Gastos() {
                 <th className="pb-2">Monto</th>
                 <th className="pb-2">Categoría</th>
                 <th className="pb-2">Fecha</th>
+                <th className="pb-2">Tipo</th>
                 <th className="pb-2">Acción</th>
               </tr>
             </thead>
@@ -306,8 +353,11 @@ function Gastos() {
                   <td className="py-2">
                     {categorias.find((c) => c.id === g.categoria_id)?.nombre || "Sin categoría"}
                   </td>
+                  <td className="py-2">{new Date(g.fecha).toLocaleDateString("es-CL")}</td>
                   <td className="py-2">
-                    {new Date(g.fecha).toLocaleDateString("es-CL")}
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${g.es_fijo ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
+                      {g.es_fijo ? `Fijo (día ${g.dia_cobro})` : "Variable"}
+                    </span>
                   </td>
                   <td className="py-2">
                     {confirmDelete === g.id ? (

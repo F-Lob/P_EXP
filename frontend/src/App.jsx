@@ -4,10 +4,11 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Gastos from "./pages/Gastos";
 import Categorias from "./pages/Categorias";
+import Tarjetas from "./pages/Tarjetas";
+import DetalleTarjeta from "./pages/DetalleTarjeta";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 
-// Componente que protege rutas privadas
 function RutaProtegida({ children }) {
   const { token } = useAuth();
   return token ? children : <Navigate to="/login" />;
@@ -23,30 +24,11 @@ function AppContenido() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
-          <Route
-            path="/"
-            element={
-              <RutaProtegida>
-                <Dashboard />
-              </RutaProtegida>
-            }
-          />
-          <Route
-            path="/gastos"
-            element={
-              <RutaProtegida>
-                <Gastos />
-              </RutaProtegida>
-            }
-          />
-          <Route
-            path="/categorias"
-            element={
-              <RutaProtegida>
-                <Categorias />
-              </RutaProtegida>
-            }
-          />
+          <Route path="/" element={<RutaProtegida><Dashboard /></RutaProtegida>} />
+          <Route path="/gastos" element={<RutaProtegida><Gastos /></RutaProtegida>} />
+          <Route path="/categorias" element={<RutaProtegida><Categorias /></RutaProtegida>} />
+          <Route path="/tarjetas" element={<RutaProtegida><Tarjetas /></RutaProtegida>} />
+          <Route path="/tarjetas/:id" element={<RutaProtegida><DetalleTarjeta /></RutaProtegida>} />
         </Routes>
       </main>
     </div>
