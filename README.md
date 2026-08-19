@@ -37,30 +37,30 @@
     Aplicación web funcional y conectada end-to-end
 
 ## 5TA Iteración
-   Mejoras de UX en Gastos y Categorías
-   Validaciones en formularios
-   Mensajes de feedback al usuario (Toast)
-   Confirmación antes de eliminar
-   Total de gastos visible por filtro y por categoría
-   Filtros y búsqueda de dato
-   Exportación de gastos a CSV y PDF
+    Mejoras de UX en Gastos y Categorías
+    Validaciones en formularios
+    Mensajes de feedback al usuario (Toast)
+    Confirmación antes de eliminar
+    Total de gastos visible por filtro y por categoría
+    Filtros y búsqueda de dato
+    Exportación de gastos a CSV y PDF
 
 ## 6TA Iteración
-   Se añade Auth
-   Se añade formulario de registro y login
-   Usuarios creados en la base de datos
-   Usuarios independientes con datos independientes
-   Mensajes de error, falla en registro/login
+    Se añade Auth
+    Se añade formulario de registro y login
+    Usuarios creados en la base de datos
+    Usuarios independientes con datos independientes
+    Mensajes de error, falla en registro/login
 
 ## 7MA Iteración
-   Implementación de tarjetas de crédito con vista de detalle
-   Control de cuotas por gasto de tarjeta (pagadas y restantes)
-   Barra de progreso visual por cuota
-   Registro y actualización de sueldo mensual
-   Saldo disponible en el Dashboard (sueldo - gastos)
-   Gastos fijos con día de cobro y filtro por tipo
-   Tarjetas de resumen en Dashboard (sueldo, saldo, mes actual, total)
-   Desglose de gastos fijos vs variables
+    Implementación de tarjetas de crédito con vista de detalle
+    Control de cuotas por gasto de tarjeta (pagadas y restantes)
+    Barra de progreso visual por cuota
+    Registro y actualización de sueldo mensual
+    Saldo disponible en el Dashboard (sueldo - gastos)
+    Gastos fijos con día de cobro y filtro por tipo
+    Tarjetas de resumen en Dashboard (sueldo, saldo, mes actual, total)
+    Desglose de gastos fijos vs variables
 
 ## Instrucciones para arrancar el proyecto
 
