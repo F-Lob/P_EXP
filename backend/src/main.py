@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import gastos, categorias, usuarios
+from .routers import gastos, categorias, usuarios, tarjetas, gastos_tarjeta, sueldo
 
 app = FastAPI(
     title="Analizador de Gastos Personales",
@@ -19,7 +19,10 @@ app.add_middleware(
 app.include_router(gastos.router)
 app.include_router(categorias.router)
 app.include_router(usuarios.router)
+app.include_router(tarjetas.router)
+app.include_router(gastos_tarjeta.router)
+app.include_router(sueldo.router)
 
 @app.get("/")
 def root():
-    return {"mensaje": "API  funcionando correctamente"}
+    return {"mensaje": "API funcionando correctamente"}
