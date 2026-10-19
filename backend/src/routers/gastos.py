@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database.database import get_db
-from ..database.models import Gasto, Usuario
+from ..database.models import Categoria, Gasto, Usuario
 from ..schemas.gastos import GastoCreate, GastoResponse
 from ..auth.auth import get_usuario_actual
+from ..database.default_categories import DEFAULT_CATEGORIES
 from typing import List
 import datetime
 
@@ -39,11 +40,21 @@ def crear_gasto(
     db: Session = Depends(get_db),
     usuario: Usuario = Depends(get_usuario_actual)
 ):
+    categoria = db.query(Categoria).filter(
+        Categoria.id == gasto.categoria_id,
+        Categoria.usuario_id == usuario.id,
+        Categoria.nombre.in_(DEFAULT_CATEGORIES)
+    ).first()
+    if not categoria:
+        raise HTTPException(status_code=400, detail="Selecciona una categoría válida")
+
     nuevo = Gasto(
         descripcion=gasto.descripcion,
         monto=gasto.monto,
         categoria_id=gasto.categoria_id,
         fecha=gasto.fecha or datetime.datetime.utcnow(),
+        es_fijo=gasto.es_fijo,
+        dia_cobro=gasto.dia_cobro if gasto.es_fijo else None,
         usuario_id=usuario.id
     )
     db.add(nuevo)
@@ -65,9 +76,19 @@ def editar_gasto(
     if not gasto:
         raise HTTPException(status_code=404, detail="Gasto no encontrado")
 
+    categoria = db.query(Categoria).filter(
+        Categoria.id == datos.categoria_id,
+        Categoria.usuario_id == usuario.id,
+        Categoria.nombre.in_(DEFAULT_CATEGORIES)
+    ).first()
+    if not categoria:
+        raise HTTPException(status_code=400, detail="Selecciona una categoría válida")
+
     gasto.descripcion = datos.descripcion
     gasto.monto = datos.monto
     gasto.categoria_id = datos.categoria_id
+    gasto.es_fijo = datos.es_fijo
+    gasto.dia_cobro = datos.dia_cobro if datos.es_fijo else None
     if datos.fecha:
         gasto.fecha = datos.fecha
 

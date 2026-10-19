@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database.database import get_db
-from ..database.models import GastoTarjeta, Usuario
+from ..database.models import GastoTarjeta, Tarjeta, Usuario
 from ..schemas.gastos_tarjeta import GastoTarjetaCreate, GastoTarjetaResponse
 from ..auth.auth import get_usuario_actual
 from typing import List
@@ -18,6 +18,13 @@ def listar_gastos_tarjeta(
     db: Session = Depends(get_db),
     usuario: Usuario = Depends(get_usuario_actual)
 ):
+    tarjeta = db.query(Tarjeta).filter(
+        Tarjeta.id == tarjeta_id,
+        Tarjeta.usuario_id == usuario.id
+    ).first()
+    if not tarjeta:
+        raise HTTPException(status_code=404, detail="Tarjeta no encontrada")
+
     gastos = db.query(GastoTarjeta).filter(
         GastoTarjeta.tarjeta_id == tarjeta_id,
         GastoTarjeta.usuario_id == usuario.id
@@ -47,6 +54,15 @@ def crear_gasto_tarjeta(
     db: Session = Depends(get_db),
     usuario: Usuario = Depends(get_usuario_actual)
 ):
+    tarjeta = db.query(Tarjeta).filter(
+        Tarjeta.id == gasto.tarjeta_id,
+        Tarjeta.usuario_id == usuario.id
+    ).first()
+    if not tarjeta:
+        raise HTTPException(status_code=400, detail="Selecciona una tarjeta válida")
+    if gasto.cuotas_pagadas > gasto.cuotas_totales:
+        raise HTTPException(status_code=400, detail="Las cuotas pagadas no pueden superar las cuotas totales")
+
     nuevo = GastoTarjeta(
         descripcion=gasto.descripcion,
         monto_total=gasto.monto_total,

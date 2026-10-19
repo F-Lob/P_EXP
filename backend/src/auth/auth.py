@@ -6,11 +6,9 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from ..database.database import get_db
 from ..database.models import Usuario
+from ..database.settings import ACCESS_TOKEN_EXPIRE_MINUTES, SECRET_KEY
 
-# Configuración — cambia SECRET_KEY por una cadena larga y aleatoria
-SECRET_KEY = "cambia_esto_por_una_clave_secreta_larga"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
