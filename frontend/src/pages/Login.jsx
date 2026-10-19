@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Toast from "../components/Toast";
+import { API_URL } from "../services/api";
 
 function Login() {
   const { login } = useAuth();
@@ -25,7 +26,7 @@ function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/usuarios/login", {
+      const response = await fetch(`${API_URL}/usuarios/login`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({

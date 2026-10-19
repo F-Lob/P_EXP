@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Analizador de Gastos</string>
+    <string name="title_activity_main">Analizador de Gastos</string>
+    <string name="package_name">com.fblapp.gastos</string>
+    <string name="custom_url_scheme">com.fblapp.gastos</string>
+</resources>

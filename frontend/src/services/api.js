@@ -1,140 +1,57 @@
-const API_URL = "http://localhost:8000";
+export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const getToken = () => localStorage.getItem("token");
 
 const headers = () => ({
   "Content-Type": "application/json",
-  Authorization: `Bearer ${getToken()}`
+  ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
 });
 
-// ---- GASTOS ----
-
-export const getGastos = async () => {
-  const response = await fetch(`${API_URL}/gastos/`, { headers: headers() });
-  return await response.json();
-};
-
-export const createGasto = async (gasto) => {
-  const response = await fetch(`${API_URL}/gastos/`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify(gasto)
+async function request(path, options = {}) {
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: { ...headers(), ...options.headers },
   });
-  return await response.json();
-};
 
-export const updateGasto = async (id, gasto) => {
-  const response = await fetch(`${API_URL}/gastos/${id}`, {
-    method: "PUT",
-    headers: headers(),
-    body: JSON.stringify(gasto)
-  });
-  return await response.json();
-};
+  const data = response.status === 204 ? null : await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(data?.detail || "No fue posible completar la solicitud");
+  }
+  return data;
+}
 
-export const deleteGasto = async (id) => {
-  const response = await fetch(`${API_URL}/gastos/${id}`, {
-    method: "DELETE",
-    headers: headers()
-  });
-  return await response.json();
-};
+export const getGastos = () => request("/gastos/");
+export const createGasto = (gasto) => request("/gastos/", { method: "POST", body: JSON.stringify(gasto) });
+export const updateGasto = (id, gasto) => request(`/gastos/${id}`, { method: "PUT", body: JSON.stringify(gasto) });
+export const deleteGasto = (id) => request(`/gastos/${id}`, { method: "DELETE" });
 
-// ---- CATEGORIAS ----
+export const getCategorias = () => request("/categorias/");
+// Se mantienen por compatibilidad con pantallas antiguas; la API rechazará cambios porque las categorías son fijas.
+export const createCategoria = (categoria) => request("/categorias/", { method: "POST", body: JSON.stringify(categoria) });
+export const deleteCategoria = (id) => request(`/categorias/${id}`, { method: "DELETE" });
+export const getTarjetas = () => request("/tarjetas/");
+export const createTarjeta = (tarjeta) => request("/tarjetas/", { method: "POST", body: JSON.stringify(tarjeta) });
+export const deleteTarjeta = (id) => request(`/tarjetas/${id}`, { method: "DELETE" });
 
-export const getCategorias = async () => {
-  const response = await fetch(`${API_URL}/categorias/`, { headers: headers() });
-  return await response.json();
-};
-
-export const createCategoria = async (categoria) => {
-  const response = await fetch(`${API_URL}/categorias/`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify(categoria)
-  });
-  return await response.json();
-};
-
-export const deleteCategoria = async (id) => {
-  const response = await fetch(`${API_URL}/categorias/${id}`, {
-    method: "DELETE",
-    headers: headers()
-  });
-  return await response.json();
-};
-
-// ---- TARJETAS ----
-
-export const getTarjetas = async () => {
-  const response = await fetch(`${API_URL}/tarjetas/`, { headers: headers() });
-  return await response.json();
-};
-
-export const createTarjeta = async (tarjeta) => {
-  const response = await fetch(`${API_URL}/tarjetas/`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify(tarjeta)
-  });
-  return await response.json();
-};
-
-export const deleteTarjeta = async (id) => {
-  const response = await fetch(`${API_URL}/tarjetas/${id}`, {
-    method: "DELETE",
-    headers: headers()
-  });
-  return await response.json();
-};
-
-// ---- GASTOS TARJETA ----
-
-export const getGastosTarjeta = async (tarjetaId) => {
-  const response = await fetch(`${API_URL}/gastos-tarjeta/tarjeta/${tarjetaId}`, {
-    headers: headers()
-  });
-  return await response.json();
-};
-
-export const createGastoTarjeta = async (gasto) => {
-  const response = await fetch(`${API_URL}/gastos-tarjeta/`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify(gasto)
-  });
-  return await response.json();
-};
-
-export const pagarCuota = async (gastoId) => {
-  const response = await fetch(`${API_URL}/gastos-tarjeta/${gastoId}/pagar-cuota`, {
-    method: "PATCH",
-    headers: headers()
-  });
-  return await response.json();
-};
-
-export const deleteGastoTarjeta = async (id) => {
-  const response = await fetch(`${API_URL}/gastos-tarjeta/${id}`, {
-    method: "DELETE",
-    headers: headers()
-  });
-  return await response.json();
-};
-
-// ---- SUELDO ----
+export const getGastosTarjeta = (tarjetaId) => request(`/gastos-tarjeta/tarjeta/${tarjetaId}`);
+export const createGastoTarjeta = (gasto) => request("/gastos-tarjeta/", { method: "POST", body: JSON.stringify(gasto) });
+export const pagarCuota = (gastoId) => request(`/gastos-tarjeta/${gastoId}/pagar-cuota`, { method: "PATCH" });
+export const deleteGastoTarjeta = (id) => request(`/gastos-tarjeta/${id}`, { method: "DELETE" });
 
 export const getSueldo = async () => {
-  const response = await fetch(`${API_URL}/sueldo/`, { headers: headers() });
-  if (response.status === 404) return null;
-  return await response.json();
+  try {
+    return await request("/sueldo/");
+  } catch (error) {
+    if (error.message === "Sueldo no registrado") return null;
+    throw error;
+  }
 };
 
-export const setSueldo = async (monto) => {
-  const response = await fetch(`${API_URL}/sueldo/`, {
-    method: "POST",
-    headers: headers(),
-    body: JSON.stringify({ monto })
-  });
-  return await response.json();
-};
+export const setSueldo = (monto) => request("/sueldo/", { method: "POST", body: JSON.stringify({ monto }) });
+export const getPerfil = () => request("/usuarios/perfil");
+export const completarOnboarding = (datos) => request("/usuarios/onboarding", { method: "POST", body: JSON.stringify(datos) });
+export const actualizarPresupuesto = (categoriaId, monto) => request(`/categorias/${categoriaId}/presupuesto`, { method: "PUT", body: JSON.stringify({ monto }) });
+export const getMetas = () => request("/metas/");
+export const crearMeta = (meta) => request("/metas/", { method: "POST", body: JSON.stringify(meta) });
+export const aportarMeta = (metaId, monto) => request(`/metas/${metaId}/aportar`, { method: "PATCH", body: JSON.stringify({ monto }) });
+export const eliminarMeta = (metaId) => request(`/metas/${metaId}`, { method: "DELETE" });

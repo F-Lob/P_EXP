@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Toast from "../components/Toast";
+import { API_URL } from "../services/api";
 
 function Registro() {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ function Registro() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/usuarios/registro", {
+      const response = await fetch(`${API_URL}/usuarios/registro`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

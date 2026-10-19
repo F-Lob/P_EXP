@@ -334,64 +334,116 @@ function Gastos() {
         </div>
 
         {gastosFiltrados.length > 0 ? (
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="text-gray-500 border-b">
-                <th className="pb-2">Descripción</th>
-                <th className="pb-2">Monto</th>
-                <th className="pb-2">Categoría</th>
-                <th className="pb-2">Fecha</th>
-                <th className="pb-2">Tipo</th>
-                <th className="pb-2">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gastosFiltrados.map((g) => (
-                <tr key={g.id} className="border-b hover:bg-gray-50">
-                  <td className="py-2">{g.descripcion}</td>
-                  <td className="py-2">${g.monto.toLocaleString("es-CL")}</td>
-                  <td className="py-2">
-                    {categorias.find((c) => c.id === g.categoria_id)?.nombre || "Sin categoría"}
-                  </td>
-                  <td className="py-2">{new Date(g.fecha).toLocaleDateString("es-CL")}</td>
-                  <td className="py-2">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${g.es_fijo ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
-                      {g.es_fijo ? `Fijo (día ${g.dia_cobro})` : "Variable"}
-                    </span>
-                  </td>
-                  <td className="py-2">
-                    {confirmDelete === g.id ? (
-                      <div className="flex gap-2 items-center">
-                        <span className="text-gray-500 text-xs">¿Seguro?</span>
-                        <button
-                          onClick={() => handleDelete(g.id)}
-                          className="text-red-500 hover:text-red-700 text-xs font-semibold transition"
-                        >
-                          Sí
-                        </button>
-                        <button
-                          onClick={() => setConfirmDelete(null)}
-                          className="text-gray-400 hover:text-gray-600 text-xs transition"
-                        >
-                          No
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => setConfirmDelete(g.id)}
-                        className="text-red-500 hover:text-red-700 transition"
-                      >
-                        Eliminar
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p className="text-gray-400 text-sm">No hay gastos para los filtros seleccionados.</p>
-        )}
+  <>
+    {/* Tabla - solo desktop */}
+    <div className="hidden md:block">
+      <table className="w-full text-sm text-left">
+        <thead>
+          <tr className="text-gray-500 border-b">
+            <th className="pb-2">Descripción</th>
+            <th className="pb-2">Monto</th>
+            <th className="pb-2">Categoría</th>
+            <th className="pb-2">Fecha</th>
+            <th className="pb-2">Tipo</th>
+            <th className="pb-2">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {gastosFiltrados.map((g) => (
+            <tr key={g.id} className="border-b hover:bg-gray-50">
+              <td className="py-2">{g.descripcion}</td>
+              <td className="py-2">${g.monto.toLocaleString("es-CL")}</td>
+              <td className="py-2">
+                {categorias.find((c) => c.id === g.categoria_id)?.nombre || "Sin categoría"}
+              </td>
+              <td className="py-2">{new Date(g.fecha).toLocaleDateString("es-CL")}</td>
+              <td className="py-2">
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${g.es_fijo ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
+                  {g.es_fijo ? `Fijo (día ${g.dia_cobro})` : "Variable"}
+                </span>
+              </td>
+              <td className="py-2">
+                {confirmDelete === g.id ? (
+                  <div className="flex gap-2 items-center">
+                    <span className="text-gray-500 text-xs">¿Seguro?</span>
+                    <button
+                      onClick={() => handleDelete(g.id)}
+                      className="text-red-500 hover:text-red-700 text-xs font-semibold transition"
+                    >
+                      Sí
+                    </button>
+                    <button
+                      onClick={() => setConfirmDelete(null)}
+                      className="text-gray-400 hover:text-gray-600 text-xs transition"
+                    >
+                      No
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setConfirmDelete(g.id)}
+                    className="text-red-500 hover:text-red-700 transition"
+                  >
+                    Eliminar
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {/* Tarjetas - solo móvil */}
+    <div className="md:hidden space-y-3">
+      {gastosFiltrados.map((g) => (
+        <div key={g.id} className="border rounded-xl p-4 hover:bg-gray-50">
+          <div className="flex justify-between items-start">
+            <div className="space-y-1">
+              <p className="font-semibold text-gray-800">{g.descripcion}</p>
+              <p className="text-blue-600 font-bold">${g.monto.toLocaleString("es-CL")}</p>
+              <p className="text-xs text-gray-500">
+                {categorias.find((c) => c.id === g.categoria_id)?.nombre || "Sin categoría"}
+              </p>
+              <p className="text-xs text-gray-400">{new Date(g.fecha).toLocaleDateString("es-CL")}</p>
+              <span className={`text-xs px-2 py-1 rounded-full font-medium inline-block ${g.es_fijo ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-600"}`}>
+                {g.es_fijo ? `Fijo (día ${g.dia_cobro})` : "Variable"}
+              </span>
+            </div>
+            <div>
+              {confirmDelete === g.id ? (
+                <div className="flex gap-2 items-center">
+                  <span className="text-gray-500 text-xs">¿Seguro?</span>
+                  <button
+                    onClick={() => handleDelete(g.id)}
+                    className="text-red-500 hover:text-red-700 text-xs font-semibold transition"
+                  >
+                    Sí
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(null)}
+                    className="text-gray-400 hover:text-gray-600 text-xs transition"
+                  >
+                    No
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setConfirmDelete(g.id)}
+                  className="text-red-500 hover:text-red-700 transition text-sm"
+                >
+                  Eliminar
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </>
+) : (
+  <p className="text-gray-400 text-sm">No hay gastos para los filtros seleccionados.</p>
+)}
       </div>
 
       <Toast mensaje={toast.mensaje} tipo={toast.tipo} />

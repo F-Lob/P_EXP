@@ -70,57 +70,57 @@ function Tarjetas() {
       <div className="bg-white rounded-2xl shadow p-6">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">Mis tarjetas</h2>
         {tarjetas.length > 0 ? (
-          <ul className="space-y-3">
-            {tarjetas.map((t) => (
-              <li
-                key={t.id}
-                className="flex items-center justify-between border rounded-xl px-4 py-3 hover:bg-gray-50"
+  <ul className="space-y-3">
+    {tarjetas.map((t) => (
+      <li
+        key={t.id}
+        className="flex flex-col sm:flex-row sm:items-center justify-between border rounded-xl px-4 py-3 hover:bg-gray-50 gap-3"
+      >
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => navigate(`/tarjetas/${t.id}`)}
+        >
+          <span className="text-2xl">💳</span>
+          <span className="text-gray-700 font-medium">{t.nombre}</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate(`/tarjetas/${t.id}`)}
+            className="text-blue-500 hover:text-blue-700 text-sm transition"
+          >
+            Ver detalle
+          </button>
+          {confirmDelete === t.id ? (
+            <div className="flex gap-2 items-center">
+              <span className="text-gray-500 text-xs">¿Seguro?</span>
+              <button
+                onClick={() => handleDelete(t.id)}
+                className="text-red-500 hover:text-red-700 text-xs font-semibold transition"
               >
-                <div
-                  className="flex items-center gap-3 cursor-pointer"
-                  onClick={() => navigate(`/tarjetas/${t.id}`)}
-                >
-                  <span className="text-2xl">💳</span>
-                  <span className="text-gray-700 font-medium">{t.nombre}</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => navigate(`/tarjetas/${t.id}`)}
-                    className="text-blue-500 hover:text-blue-700 text-sm transition"
-                  >
-                    Ver detalle
-                  </button>
-                  {confirmDelete === t.id ? (
-                    <div className="flex gap-2 items-center">
-                      <span className="text-gray-500 text-xs">¿Seguro?</span>
-                      <button
-                        onClick={() => handleDelete(t.id)}
-                        className="text-red-500 hover:text-red-700 text-xs font-semibold transition"
-                      >
-                        Sí
-                      </button>
-                      <button
-                        onClick={() => setConfirmDelete(null)}
-                        className="text-gray-400 hover:text-gray-600 text-xs transition"
-                      >
-                        No
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setConfirmDelete(t.id)}
-                      className="text-red-500 hover:text-red-700 transition text-sm"
-                    >
-                      Eliminar
-                    </button>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-400 text-sm">No tienes tarjetas registradas aún.</p>
-        )}
+                Sí
+              </button>
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="text-gray-400 hover:text-gray-600 text-xs transition"
+              >
+                No
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirmDelete(t.id)}
+              className="text-red-500 hover:text-red-700 transition text-sm"
+            >
+              Eliminar
+            </button>
+          )}
+        </div>
+      </li>
+    ))}
+  </ul>
+) : (
+  <p className="text-gray-400 text-sm">No tienes tarjetas registradas aún.</p>
+)}
       </div>
 
       <Toast mensaje={toast.mensaje} tipo={toast.tipo} />

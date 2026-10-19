@@ -2,8 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
-import Gastos from "./pages/Gastos";
-import Categorias from "./pages/Categorias";
 import Tarjetas from "./pages/Tarjetas";
 import DetalleTarjeta from "./pages/DetalleTarjeta";
 import Login from "./pages/Login";
@@ -25,8 +23,8 @@ function AppContenido() {
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/" element={<RutaProtegida><Dashboard /></RutaProtegida>} />
-          <Route path="/gastos" element={<RutaProtegida><Gastos /></RutaProtegida>} />
-          <Route path="/categorias" element={<RutaProtegida><Categorias /></RutaProtegida>} />
+          <Route path="/gastos" element={<Navigate to="/" replace />} />
+          <Route path="/categorias" element={<Navigate to="/" replace />} />
           <Route path="/tarjetas" element={<RutaProtegida><Tarjetas /></RutaProtegida>} />
           <Route path="/tarjetas/:id" element={<RutaProtegida><DetalleTarjeta /></RutaProtegida>} />
         </Routes>

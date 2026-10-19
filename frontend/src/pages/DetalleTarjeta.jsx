@@ -90,7 +90,6 @@ function DetalleTarjeta() {
     cargarDatos();
   };
 
-  // Total de deuda pendiente
   const totalPendiente = gastos.reduce((acc, g) => {
     return acc + g.monto_por_cuota * g.cuotas_restantes;
   }, 0);
@@ -98,10 +97,10 @@ function DetalleTarjeta() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
         <button
           onClick={() => navigate("/tarjetas")}
-          className="text-blue-600 hover:underline text-sm"
+          className="text-blue-600 hover:underline text-sm w-fit"
         >
           ← Volver a tarjetas
         </button>
@@ -121,7 +120,7 @@ function DetalleTarjeta() {
       {/* Formulario */}
       <div className="bg-white rounded-2xl shadow p-6 space-y-4">
         <h2 className="text-lg font-semibold text-gray-700">Agregar gasto en cuotas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <input
             type="text"
             name="descripcion"
@@ -168,7 +167,7 @@ function DetalleTarjeta() {
         </div>
         <button
           onClick={handleSubmit}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition w-full sm:w-fit"
         >
           Agregar
         </button>
@@ -184,21 +183,21 @@ function DetalleTarjeta() {
                 key={g.id}
                 className={`border rounded-xl p-4 ${g.cuotas_restantes === 0 ? "bg-green-50 border-green-200" : "hover:bg-gray-50"}`}
               >
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-1 flex-1">
                     <p className="font-semibold text-gray-800">{g.descripcion}</p>
                     <p className="text-sm text-gray-500">
-                      Monto total: ${g.monto_total.toLocaleString("es-CL")} —
-                      Cuota mensual: ${g.monto_por_cuota.toLocaleString("es-CL")}
+                      Total: ${g.monto_total.toLocaleString("es-CL")} —
+                      Cuota: ${g.monto_por_cuota.toLocaleString("es-CL")}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
-                      <div className="w-48 bg-gray-200 rounded-full h-2">
+                      <div className="flex-1 max-w-xs bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-blue-600 h-2 rounded-full"
                           style={{ width: `${(g.cuotas_pagadas / g.cuotas_totales) * 100}%` }}
                         />
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 whitespace-nowrap">
                         {g.cuotas_pagadas}/{g.cuotas_totales} cuotas
                         {g.cuotas_restantes === 0 && (
                           <span className="ml-2 text-green-600 font-semibold">✅ Pagado</span>
@@ -206,7 +205,7 @@ function DetalleTarjeta() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex sm:flex-col items-center sm:items-end gap-2">
                     {g.cuotas_restantes > 0 && (
                       <button
                         onClick={() => handlePagarCuota(g.id)}
