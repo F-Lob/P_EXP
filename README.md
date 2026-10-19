@@ -62,6 +62,19 @@
    Tarjetas de resumen en Dashboard (sueldo, saldo, mes actual, total)
    Desglose de gastos fijos vs variables
 
+## 8va Iteración
+   Diseño responsive en todos los componentes
+   Navbar con menu hamburguesa
+   Gráficos adaptados a pantallas moviles
+   Formularios y listas adaptados a moviles
+
+## 9NA Iteración
+   Tarjeta de credito con desglose
+   Control de cuotas (pagadas, restantes)
+   Registro y actualización de sueldo/dinero recibido
+   Desglose de gastos fijos vs variables en dashboard
+   Separacion de datos por usuario en tarjetas
+
 ## Instrucciones para arrancar el proyecto
 
 ## Requisitos
@@ -74,22 +87,19 @@
    - python -m venv env
    - env\Scripts\activate
 2. Instalar dependencias:
-   - pip install fastapi uvicorn sqlalchemy psycopg2-binary pandas python-dotenv
-3. Crear el archivo src/database/config.py con las credenciales de la base de datos:
-   - DB_USER
-   - DB_PASSWORD
-   - DB_HOST
-   - DB_PORT
-   - DB_NAME
-   - DATABASE_URL
-4. Ejecutar py create_tables.py para crear las tablas e insertar categorías iniciales
+   - pip install -r requirements.txt
+3. Copiar `backend/.env.example` como `backend/.env` y completar:
+   - `DATABASE_URL`
+   - `SECRET_KEY` (una clave larga y aleatoria)
+   - `ACCESS_TOKEN_EXPIRE_MINUTES` (opcional)
+4. Ejecutar `py src/create_tables.py` para crear las tablas. Las categorías fijas se asignan al registrar cada usuario.
 5. Arrancar el backend:
    - uvicorn src.main:app --reload
+6. Si ya tenías una base de datos creada, ejecuta `alembic upgrade head` desde `backend/` para migrar los montos a valores monetarios exactos.
 
 ## Frontend
 1. Instalar dependencias dentro de frontend/:
    - npm install
 2. Hacer funcionar el frontend:
    - npm run dev
-
-
+3. Para otro entorno, copia `frontend/.env.example` como `frontend/.env` y ajusta `VITE_API_URL`.

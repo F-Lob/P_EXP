@@ -1,2 +1,8 @@
 backend/src/database/config.py
+__pycache__/
+*.py[cod]
+.env
+frontend/.env
+frontend/dist/
 .gitignore
+backend/.env
